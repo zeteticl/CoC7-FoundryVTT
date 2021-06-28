@@ -635,6 +635,8 @@
 "CoC7.HowToTranslateEnableTranslation": "Inside the Game World, under Configuration/Manage Modules activate both Babele and the translations.",
 "CoC7.HowToTranslateNoTranslation": "Instructions for creating new language translations are available on existing translation modules.",
 
+"CoC7.initialvalue": "Daily initial San value",
+
 "SETTINGS.DebugMode": "System Debug Mode",
 "SETTINGS.DebugModeHint": "!!RESTART REQUIRED!!",
 "SETTINGS.DefaultDifficulty": "Default check difficulty",
