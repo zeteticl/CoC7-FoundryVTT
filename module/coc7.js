@@ -1,3 +1,4 @@
+/* global CONST, game, Hooks, ui */
 // Import Modules
 import { CoCActor } from './actors/actor.js';
 import { CoC7WeaponSheet } from './items/sheets/weapon-sheet.js';
@@ -10,6 +11,8 @@ import { CoC7CharacterSheetV2 } from './actors/sheets/character.js';
 import { preloadHandlebarsTemplates } from './templates.js';
 import { CoC7Chat } from './chat.js';
 import { CoC7Combat, rollInitiative } from './combat.js';
+import { CoC7ItemSheetV2 } from './items/sheets/item-sheetV2.js';
+import { CoC7SkillSheet} from './items/sheets/skill.js';
 import { CoC7BookSheet } from './items/sheets/book.js';
 import { CoC7SpellSheet } from './items/sheets/spell.js';
 import { CoC7TalentSheet } from './items/sheets/talent.js';
@@ -27,6 +30,10 @@ import { CoC7Menu } from './menu.js';
 import { OpposedCheckCard } from './chat/cards/opposed-roll.js';
 import { CombinedCheckCard } from './chat/cards/combined-roll.js';
 import { DamageCard } from './chat/cards/damage.js';
+import { CoC7VehicleSheet } from './actors/sheets/vehicle.js';
+import { CoC7Canvas } from './apps/canvas.js';
+import { CoC7ChaseSheet } from './items/sheets/chase.js';
+import { CoC7CompendiumDirectory } from './compendium-directory.js';
 
 Hooks.once('init', async function() {
 
@@ -52,10 +59,18 @@ Hooks.once('init', async function() {
 		decimals: 4
 	};
 
-	//TODO : remove debug hooks
-	CONFIG.debug.hooks = true;
-	CONFIG.Actor.entityClass = CoCActor;
-	CONFIG.Item.entityClass = CoC7Item;
+	game.settings.register('CoC7', 'debugmode', {
+		name: 'SETTINGS.DebugMode',
+		hint: 'SETTINGS.DebugModeHint',
+		scope: 'world',
+		config: true,
+		type: Boolean,
+		default: false
+	});
+
+	CONFIG.debug.hooks = !!game.settings.get('CoC7', 'debugmode');
+	CONFIG.Actor.documentClass = CoCActor;
+	CONFIG.Item.documentClass = CoC7Item;
 	Combat.prototype.rollInitiative = rollInitiative;
 
 	game.settings.register('CoC7', 'developmentEnabled', {
@@ -82,6 +97,14 @@ Hooks.once('init', async function() {
 		default: 0
 	});
 
+	game.settings.register('CoC7', 'xpEnabled', {
+		name: 'Enable XP gain',
+		scope: 'world',
+		config: false,
+		type: Boolean,
+		default: true
+	});
+
 	game.settings.register('CoC7', 'gridSpaces', {
 		name: 'SETTINGS.RestrictGridSpaces',
 		hint: 'SETTINGS.RestrictGridSpacesHint',
@@ -100,6 +123,32 @@ Hooks.once('init', async function() {
 		type: Boolean
 	});
 
+	game.settings.register('CoC7', 'developmentRollForLuck', {
+		name: 'SETTINGS.developmentRollForLuck',
+		hint: 'SETTINGS.developmentRollForLuckHint',
+		scope: 'world',
+		config: true,
+		default: false,
+		type: Boolean
+	});
+
+	game.settings.register('CoC7', 'displayPlayerNameOnSheet', {
+		name: 'SETTINGS.displayPlayerNameOnSheet',
+		scope: 'world',
+		config: true,
+		default: false,
+		type: Boolean
+	});
+
+	game.settings.register('CoC7', 'oneBlockBackstory', {
+		name: 'SETTINGS.OneBlockBackStory',
+		hint: 'SETTINGS.OneBlockBackStoryHint',
+		scope: 'world',
+		config: true,
+		default: false,
+		type: Boolean
+	});
+
 	// Set default check difficulty.
 	game.settings.register('CoC7', 'defaultCheckDifficulty', {
 		name: 'SETTINGS.DefaultDifficulty',
@@ -111,6 +160,21 @@ Hooks.once('init', async function() {
 		choices: {
 			'regular': 'SETTINGS.CheckDifficultyRegular',
 			'unknown': 'SETTINGS.CheckDifficultyUnknown'
+		}
+	});
+
+	// Allow player to unlock the sheet outside of creation mode.
+	game.settings.register( 'CoC7', 'selfRollWhisperTarget',{
+		name: 'SETTINGS.SelfRollWhisperTarget',
+		hint: 'SETTINGS.SelfRollWhisperTargetHint',
+		scope: 'world',
+		config: true,
+		default: 'everyone',
+		type: String,
+		choices: {
+			'nobody': 'SETTINGS.DoNotAdvise',
+			'owners': 'SETTINGS.AdviseOwnersOnly',
+			'everyone': 'SETTINGS.AdviseAllPlayer'
 		}
 	});
 
@@ -342,6 +406,29 @@ Hooks.once('init', async function() {
 			type: String
 		});
 
+		game.settings.register('CoC7', 'artWorkSheetBackgroundType',{
+			name: 'SETTINGS.ArtWorkSheetBackgroundType',
+			scope: 'world',
+			config: true,
+			default: 'slice',
+			type: String,
+			choices: {
+				'slice': 'SETTINGS.BackgroundSlice',
+				'auto': 'SETTINGS.BackgroundAuto',
+				'contain': 'SETTINGS.BackgroundContain',
+				'cover': 'SETTINGS.BackgroundCover'
+			}
+		});
+
+		game.settings.register('CoC7', 'artWorkOtherSheetBackground',{
+			name: 'SETTINGS.ArtWorkOtherSheetBackground',
+			hint: 'SETTINGS.ArtWorkOtherSheetBackgroundHint',
+			scope: 'world',
+			config: true,
+			default: 'url( \'./artwork/backgrounds/sheet.jpg\')',
+			type: String
+		});
+
 		game.settings.register('CoC7', 'artworkSheetImage',{
 			name: 'SETTINGS.ArtworkSheetImage',
 			hint: 'SETTINGS.ArtworkSheetImageHint',
@@ -442,11 +529,13 @@ Hooks.once('init', async function() {
 	// Register sheet application classes
 	Actors.unregisterSheet('core', ActorSheet);
 	Actors.registerSheet('CoC7', CoC7NPCSheet, { types: ['npc'], makeDefault: true});
+	Actors.registerSheet('CoC7', CoC7VehicleSheet, { types: ['vehicle'], makeDefault: true});
 	Actors.registerSheet('CoC7', CoC7CreatureSheet, { types: ['creature'], makeDefault: true});
 	Actors.registerSheet('CoC7', CoC7CharacterSheet, { types: ['character']});
 	Actors.registerSheet('CoC7', CoC7CharacterSheetV2, { types: ['character'], makeDefault: true});
 	
 	Items.unregisterSheet('core', ItemSheet);
+	Items.registerSheet('CoC7', CoC7SkillSheet, { types: ['skill'], makeDefault: true});
 	Items.registerSheet('CoC7', CoC7WeaponSheet, { types: ['weapon'], makeDefault: true});
 	Items.registerSheet('CoC7', CoC7BookSheet, { types: ['book'], makeDefault: true});
 	Items.registerSheet('CoC7', CoC7SpellSheet, { types: ['spell'], makeDefault: true});
@@ -455,8 +544,10 @@ Hooks.once('init', async function() {
 	Items.registerSheet('CoC7', CoC7OccupationSheet, { types: ['occupation'], makeDefault: true});
 	Items.registerSheet('CoC7', CoC7ArchetypeSheet, { types: ['archetype'], makeDefault: true});
 	Items.registerSheet('CoC7', CoC7SetupSheet, { types: ['setup'], makeDefault: true});
+	Items.registerSheet('CoC7', CoC7ChaseSheet, { types: ['chase'], makeDefault: true});
 	// Items.registerSheet('CoC7', CoC7ManeuverSheet, { types: ['maneuver'], makeDefault: true});
-	Items.registerSheet('CoC7', CoCItemSheet, { makeDefault: true});
+	Items.registerSheet('CoC7', CoCItemSheet, { types: ['item']});
+	Items.registerSheet('CoC7', CoC7ItemSheetV2, { types: ['item'], makeDefault: true});
 	preloadHandlebarsTemplates();
 });
 
@@ -640,11 +731,21 @@ Hooks.on('renderItemSheet', CoC7Parser.ParseSheetContent);
 Hooks.on('renderJournalSheet', CoC7Parser.ParseSheetContent);
 Hooks.on('renderActorSheet', CoC7Parser.ParseSheetContent);
 // Chat command processing
-Hooks.on('preCreateChatMessage', CoC7Parser.ParseMessage);
+// Hooks.on('preCreateChatMessage', CoC7Parser.ParseMessage);
+// Hooks.on('createChatMessage', CoC7Chat.createChatMessageHook);
+Hooks.on('renderChatMessage',  (app, html, data) =>{
+	CoC7Chat.renderChatMessageHook(app, html, data);
+	CoC7Parser.ParseMessage( app, html, data);
+});
 // Sheet V2 css options
-Hooks.on('renderCoC7CharacterSheetV2', CoC7CharacterSheetV2.renderSheet);
+// Hooks.on('renderCoC7CharacterSheetV2', CoC7CharacterSheetV2.renderSheet);
+Hooks.on('renderActorSheet', CoC7CharacterSheetV2.renderSheet); //TODO : change from CoC7CharacterSheetV2
+Hooks.on('renderItemSheet', CoC7CharacterSheetV2.renderSheet); //TODO : change from CoC7CharacterSheetV2
+
 // Hooks.on('dropCanvasData', CoC7Parser.onDropSomething);
 Hooks.on('renderSceneControls', CoC7Menu.renderMenu);
+
+Hooks.on('dropCanvasData', CoC7Canvas.onDropSomething);
 
 
 tinyMCE.PluginManager.add('CoC7_Editor_OnDrop', function (editor) {
@@ -663,3 +764,27 @@ function _onLeftClick( event){
 	return event.shiftKey;
 }
 
+Hooks.on('targetToken', function (user, token, targeted) {
+	if (targeted) {
+		// Check if the targeted token is a player controlled token but no user controls it
+		let gmonly = true;
+		if (token.actor.data.permission.default === CONST.ENTITY_PERMISSIONS.OWNER) {
+			gmonly = false;
+		} else {
+			const gms = game.users.filter(a => a.isGM).map(a => a.id);
+			for (const [k, v] of Object.entries(token.actor.data.permission)) {
+				if (k !== 'default' && v === CONST.ENTITY_PERMISSIONS.OWNER && !gms.includes(k)) {
+					gmonly = false;
+				}
+			}
+		}
+		if (!gmonly) {
+			const controlled = game.users.filter(a => !a.isGM && a.data.character === token.actor.id);
+			if (controlled.length === 0) {
+				ui.notifications.error(game.i18n.format('CoC7.MessageSelectedTargetIsNotControlled', { name: token.name }));
+			}
+		}
+	}
+});
+
+CONFIG.ui.compendium = CoC7CompendiumDirectory;

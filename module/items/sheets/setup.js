@@ -127,7 +127,7 @@ export class CoC7SetupSheet extends ItemSheet {
 		return mergeObject(super.defaultOptions, {
 			classes: ['coc7', 'sheet', 'setup'],
 			width: 520,
-			height: 480,
+			height: 530,
 			resizable: false,
 			dragDrop: [{dragSelector: '.item'}],
 			scrollY: ['.tab.description'],
@@ -151,6 +151,11 @@ export class CoC7SetupSheet extends ItemSheet {
 		const data=super.getData();
 
 		data.isOwned = this.item.isOwned;
+
+		/** MODIF: 0.8.x **/
+		const itemData = data.data;
+		data.data = itemData.data; //MODIF: 0.8.x data.data
+		/*****************/
 
 		// data.data.items = duplicate( data.data.skills);
 		// this.item.update( { ['data.items'] : duplicate( data.data.skills)});
@@ -187,6 +192,9 @@ export class CoC7SetupSheet extends ItemSheet {
 		for (let entry of Object.entries(data.data.eras)) {
 			if( entry[1].selected) data.itemProperties.push( entry[1].name);
 		}
+
+		data.oneBlockBackStory = game.settings.get( 'CoC7', 'oneBlockBackstory');
+
 		return data;
 	}
 

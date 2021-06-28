@@ -1,4 +1,7 @@
+import { CoC7Chat } from './chat.js';
 import { CoC7Utilities } from './utilities.js';
+import { CoC7ActorImporterDialog } from './apps/actor-importer-dialog.js';
+import { CoC7LinkCreationDialog } from './apps/link-creation-dialog.js';
 
 export class CoC7Menu {
 	constructor( options){
@@ -65,7 +68,7 @@ export class CoC7Menu {
 	
 		// Handle Tools
 		else {
-			control.activeTool = toolName;
+			tool.activeTool = toolName;
 			if ( tool.onClick instanceof Function ) tool.onClick();
 		}
 	}
@@ -112,7 +115,8 @@ export class CoC7Menu {
 				let active = isActive && ((s.activeTool === t.name) || (t.toggle && t.active));
 				t.css = [
 					t.toggle ? 'toggle' : null,
-					active ? 'active' : null
+					active ? 'active' : null,
+					t.class ? t.class : null
 				].filter(t => !!t).join(' ');
 				return t;
 			});
@@ -146,11 +150,43 @@ export class CoC7Menu {
 				},
 				{
 					toggle: true,
-					icon : 'fas fas fa-user-edit',
+					icon : 'fas fa-user-edit',
 					name: 'charcreate',
 					active: game.settings.get('CoC7', 'charCreationEnabled'), 
 					title: 'CoC7.CharCreationMode',
 					onClick :async () => await CoC7Utilities.toggleCharCreation()
+				},
+				{
+					button: true,
+					icon: 'fas fa-user-plus',
+					name: 'actor-import',
+					title: 'CoC7.ActorImporter',
+					onClick : async () => await CoC7ActorImporterDialog.create({
+						title: game.i18n.localize('CoC7.ActorImporter')
+					})
+				},
+				{
+					toggle: true,
+					icon : 'fas fa-certificate',
+					class: 'xp_toggle',
+					name: 'xptoggle',
+					active: game.settings.get('CoC7', 'xpEnabled'), 
+					title: 'CoC7.toggleXP',
+					onClick :async () => await CoC7Utilities.toggleXPGain()
+				},
+				{
+					button: true,
+					icon: 'game-icon game-icon-card-joker',
+					name: 'fakeroll',
+					title: 'CoC7.FakeRoll',
+					onClick : CoC7Chat.fakeRollMessage
+				},
+				{
+					button: true,
+					icon: 'fas fa-moon',
+					name: 'startrest',
+					title: 'CoC7.startRest',
+					onClick :async () => await CoC7Utilities.startRest()
 				}
 			]
 		});
@@ -161,6 +197,15 @@ export class CoC7Menu {
 			title: 'CoC7.RollDice',
 			button: true,
 			onClick: (event) => CoC7Utilities.rollDice(event)
+		});
+
+		controls.push({
+			icon: 'fas fa-link',
+			name: 'create-link',
+			title: 'CoC7.CreateLink',
+			visible: isGM,
+			button: true,
+			onClick: CoC7LinkCreationDialog.create
 		});
 		return controls;
 	}

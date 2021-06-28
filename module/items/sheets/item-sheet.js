@@ -16,7 +16,7 @@ export class CoCItemSheet extends ItemSheet {
    */
 	static get defaultOptions() {
 		return mergeObject(super.defaultOptions, {
-			classes: ['coc7', 'sheet', 'item'],
+			classes: ['coc7', 'sheetV2', 'item'],
 			width: 520,
 			height: 480,
 			tabs: [{navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'skills'}]
@@ -28,8 +28,13 @@ export class CoCItemSheet extends ItemSheet {
 
 	/** @override */
 	get template() {
+		if( 'item' == this.item.data.type) return 'systems/CoC7/templates/items/item-sheetV2.html';
 		const path = 'systems/CoC7/templates/items';
 		return `${path}/${this.item.data.type}-sheet.html`;
+	}
+
+	get width(){
+		return 520;
 	}
 
 	/* -------------------------------------------- */
@@ -43,6 +48,12 @@ export class CoCItemSheet extends ItemSheet {
 	getData() {
 		// this.item.checkSkillProperties();
 		const data = super.getData();
+
+		/** MODIF: 0.8.x **/
+		const itemData = data.data;
+		data.data = itemData.data; //MODIF: 0.8.x data.data
+		/*****************/
+				
 		data.hasOwner = this.item.actor != null;
 		
 		if( this.item.data.type == 'skill'){

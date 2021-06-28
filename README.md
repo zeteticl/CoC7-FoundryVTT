@@ -22,11 +22,155 @@ Compendium 'Roll Requests' contains numerous links for all your needs.
 
 ## What is working
 
+version 0.6.1 :
+
+* #562 from @snap01 : Adding information on compendium translation. Compendium translation can be found here :
+  * [Spanish](https://foundryvtt.com/packages/call-of-cthulhu-7th-babele-es)
+  * [Svenska](https://foundryvtt.com/packages/coc7-babele-sv)
+  * [Deutsch](https://foundryvtt.com/packages/call-of-cthulhu-7th-babele-de)
+  * [Italian](https://foundryvtt.com/packages/call-of-cthulhu-7th-babele-it)
+  * [Brazilian](https://foundryvtt.com/packages/call-of-cthulhu-7th-babele-pt-BR)
+  * [Korean](https://foundryvtt.com/packages/CoC7kr)
+
+version 0.6.0 :
+
+* Ready for 0.8.x thanks to the kind help of
+  * @pconcepcion
+  * @snap01
+* This version is NOT compatible with foundry version < 0.8
+* Please report all bugs on github !
+* #538 Upgrade on health monitor thanks to @castanhocorreia.
+  * Modifying HP manually will now correctly trigger all status.
+  * You can set HP by entering negative value : (HP=25)/Enter -7/(HP=18).
+* #549 bug correction from @zeteticl.
+* #555 regression fixed by @snap01.
+* Taiwanese Mandarin translations updated thanks to @zeteticl.
+
+version 0.5.9 :
+
+* ___!! Last release in 0.7.x cycle !!___
+* Development improvement thanks to @castanhocorreia.
+  * #518 : Development roll for Luck, OneFifthSanity system and MP recover.
+    * The Start Rest function now recovers Magic Points (7). In the future I intend to present a dialog box where Keeper informs how many hours of rest the Investigators had, so that they can recover the corresponding amount.
+    The one-fifth of Sanity points does not change with loss or increase of Sanity points and will only change to one-fifth of total Sanity if the day is reset via the reset button or the Start Rest macro.
+  * #538 : Set Health Status Manually.
+* #522 Localization of link creation title window thanks to @castanhocorreia.
+* #530 bug correction from @snap01.
+  * Actors owned but not controlled by a playuer will rise a warnin when targeted.
+  * #410 Weapons without description show [object Object].
+  * #524 Books containing spells were not pre-processed.
+* Swedish translation updated thanks to @rangertheman.
+
+version 0.5.8 :
+
+* ___!! This will probably be the last release in 0.7.x cycle !!___
+* Bug correction:
+  * A bug during actor import that could lead to an uninterrupted loop had been resolved. Thanks to @BrotherSharper for his help finding this!
+  * Typo correction in combat chat card.
+* CSS options added to specify the type of background for the sheet.
+  * The background image is by default a border image sliced to 'open' and keep header's proportion.
+  * You can now specify this property as the CSS property background (including repeat, position and attachment).
+  * To enable this you need to select a background type.
+    * slice: image used as border-image.
+    * auto/contains/cover: similar to the background-size property.
+* Option added to disable debug hooks (thanks to @snap01).
+* Japanese translation updated thanks to @BrotherSharper
+* French doc and translation updated thanks to @vonv
+* German translation updated thanks to @IchbinkeinReh
+* Chase items are not operational.
+
+version 0.5.7 :
+
+* Bug correction:
+  * CSS reworked on sheetV2 to prevent sliding items no to display correctly.
+* link system reworked:
+  * Clicking on a link will trigger the check.
+  * CTRL+click on a link will open and fill the link creation popup.
+  * Links created by CTRL+click on any element will no more create the link directly, a link creation windows will popup instead.
+  * You can pop the link creation window by clicking the link icon in the side menu.
+* Link creation popup:
+  * This will propose you with various options to create a link.
+  * You can drop stuff on this window to fill it.
+* Link created can now be dropped on the canvas (thanks to José Lozano/Viriato139ac and JuanV for tip in issue #461)
+  * If there's a token on the drop, the link will be whispered to that token owner(s).
+  * If there's no token, the link will be whispered to the tokens you controlled (selected).
+  * If there's no token selected and no token below the drop that link will be whispered to all players having a character.
+* Rest macro added to GM tools thanks to @castanhocorreia.
+* Missing localization keys added thanks to @castanhocorreia.
+* OPPOSED/COMBINED CHECK WIP.
+* German translation updated thanks to @nilsriesenberg
+* Swedish translation updated thanks to @rangertheman
+* French doc and translation updated thanks to @vonv
+
+version 0.5.6 :
+
+* Implementation of vehicle sheet.
+  * No automation so far on the sheets.
+  * Sheet support 'platting' which allows for multiple armor location. This is just an information for the time being.
+  * New button on the sheet allowing to collapse or expand the sheet. This is mainly a test and will propagated to the other sheet in due time.
+* Modification of Item sheet. Its now move to 'V2 style'.
+* New option added in Artwork override to allow specific background for 'other' V2 sheet (Anything but character sheet).
+* Character import now supports localization thanks to @pconcepcion.
+  * __*English*__, French and Spanish are supported.
+  * See `module/apps/actor-importer-regexp.js` for details.
+* Documentation refactor and re-organization thanks to @pconcepcion. (All Praise to Him!!)
+* Bug correction:
+  * #451, pulp specific. A bug preventing core characteristic roll in some cases corrected thanks to  @timpatim.
+  * #460, A bug displaying undefined in item description.
+* Modification thanks to @zeteticl
+  * Sanity monitor now display the daily threshold.
+* Português (Brasil) translation updated thanks to @castanhocorreia.
+* German translation updated thanks to @nilsriesenberg.
+* French doc and translation updated thanks to @vonv.
+
+version 0.5.5 :
+
+* New feature thanks to [@pconcepcion](https://github.com/pconcepcion)!
+  * You can now import your actors in the system using GM Tools.
+  * This is a first version, but it's already fully functional!
+  * Details here : <https://github.com/HavlockV/CoC7-FoundryVTT/pull/444>.
+* Documentation has started !! Thanks to  [@pconcepcion](https://github.com/pconcepcion) and [@jantoniomartin](https://github.com/jantoniomartin). You can find them :
+  * [@pconcepcion](https://github.com/pconcepcion) system documentation : doc/README.md.
+  * [@jantoniomartin](https://github.com/jantoniomartin) user's guide : docs/en/users-guide.md.
+* Bug correction:
+  * Private GM roll are now properly displayed.
+  * #442 CSS correction on creature/NPC sheets.
+* Bug correction thanks to [@jantoniomartin](https://github.com/jantoniomartin):
+  * #410. Fixed assignment of item description value.
+  * #427. Fixed a visibility issue with drop-down.
+  * Setup sheet now includes a one-block backstory if the corresponding option is activated.
+* #432 Option added to display a name instead of SAN data when creating a link (GM only).
+* Posting CoC7 link to the chat-log has been slightly modified.
+  * If you have any token selected, the check will be triggered for all your selected tokens.
+  * If you don't have any token selected but you have some targets, that CoC7 link will be whispered to your targets.
+  * Holding CTRL when clicking a CoC7 link your selected token will not be checked and the link will be whispered to your targets or publish in the chat-log if you don't have any target.
+* Swedish translation and skills added thanks to @Rangertheman.
+* French translation updated thanks to @vonv
+* Taiwanese Mandarin translation updated thanks to @Zeteticl.
+* Português (Brasil) translation updated thanks to @castanhocorreia.
+
+version 0.5.4 :
+
+* Bug correction:
+  * Changes from px to rem in some part of the sheet.
+  * #416 Damage bonus is now correctly applied.
+  * GM modified rolls are now properly set when revealed.
+  * when revealed, blind GM roll are shown to the player involved only, unless CTRL is pressed.
+* A toggle allowing character to gain XP is added on the keeper's tools.
+* An option is added to replace backstory entries with one big editor block with formatting and links support.
+
 version 0.5.3 :
 
 * Bug correction:
   * Corrected a bug where editor in archetype sheet did not display correctly.
   * #390 Character sheet elements changed from px to rem.
+* Check can use selfRoll mode.
+  * An option is added to specify who will receive a notification in case of a GM self roll.
+  * Defaulted to all players (Foundry default behaviour).
+* #401 addressed thanks to @jantoniomartin !
+  * During character setup, using points, you can now roll luck.
+  * Luck is not part of the point budget
+  * Buttons added to increase/deacrease characteristic.
 * #359-1 Armor can now be defined as a roll string (1D6).
 * Changes in damage cards.
   * Damage cards have been reworked.
@@ -38,6 +182,7 @@ version 0.5.3 :
   * Damage mitigated will be displayed on the damage roll.
 * Implementation of system specific controls.
   * Keeper's tools for GM will allow to enable/disable creation and development modes.
+  * Keeper's tools has a button to simulate a fake GM self roll.
   * Dice will allow to roll a generic check.
 * Implementation of opposed rolls.
   * Right click on any element to include it in an opposed roll.
@@ -68,8 +213,7 @@ version 0.5.3 :
 * new macro check( [Threshold, [event]]) allow to roll a generic check. `game.CoC7.macros.check(75, event)`
 * #385 Optional flat dice and threshold modifier added.
   * Disabled by default, can be enabled in options.
-* [bug] Actor san loss refers to actor, not synthetic actor.
-* Actors of character's type are now created with vision and linked actor data by default.
+* Actors of type 'character' are now created with vision and linked actor data by default.
 * German translation updated thanks to acd-jake.
 * Português (Brasil) translation updated thanks to Castanho.
 * Taiwanese Mandarin and Chinese translations updated thanks to Zeteticl.
